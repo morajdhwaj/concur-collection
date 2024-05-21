@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import inquirer from "inquirer";
+import readline from "readline";
 
 // displayAsciiArt.js
 
@@ -23,13 +24,13 @@ ${colors.yellow}██╔════╝██╔═══██╗████�
 ${colors.yellow}██║     ██║   ██║██╔██╗ ██║██║     ██║   ██║██████╔╝    ${colors.reset}
 ${colors.yellow}██║     ██║   ██║██║╚██╗██║██║     ██║   ██║██╔══██╗    ${colors.reset}
 ${colors.yellow}╚██████╗╚██████╔╝██║ ╚████║╚██████╗╚██████╔╝██║  ██║    ${colors.reset}
-${colors.yellow} ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝    ${colors.reset}
+${colors.yellow} ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝    ${colors.reset}
 `;
 const decs = `Concur - Consent Manager is open source consent manager that 
 helps companies comply with Digital Personal Data Protection Act, 
 2023. Some more content will come here for ready to read and get
 education about concur To Know more Visit: https://concur.live
-Enter to continue to integrate Consent Collection in our applicationy `;
+Enter to continue to integrate Consent Collection in our application `;
 
 console.log(asciiArt);
 console.log(decs);
@@ -37,33 +38,67 @@ console.log(decs);
 const questions = [
   {
     type: "input",
-    name: "firstName",
-    message: "What is your first name?",
+    name: "ProjectName",
+    message: "What is your project name?",
   },
   {
     type: "input",
-    name: "lastName",
-    message: "What is your last name?",
+    name: "Email",
+    message: "What is your  email?",
   },
   {
     type: "input",
-    name: "country",
-    message: "What is your country name?",
+    name: "Mobile ",
+    message: "What is your mobile number?",
   },
+
   {
-    type: "input",
-    name: "age",
-    message: "What is your age?",
+    type: "list",
+    name: "Customers",
+    message: "Number of tentative customers for consent collection:",
+    choices: ["1-1k", "1k-100k", "100k-500k", "500k+"],
   },
 ];
 
-inquirer
-  .prompt(questions)
-  .then((answers) => {
+const askQuestions = async () => {
+  const answers = {};
+  for (const question of questions) {
+    const answer = await askQuestion(question);
+    answers[question.name] = answer[question.name];
+  }
+  return answers;
+};
+
+const askQuestion = async (question) => {
+  try {
+    const answer = await inquirer.prompt([question]);
     console.log(
-      `Hello ${answers.firstName} ${answers.lastName} from ${answers.country}, aged ${answers.age}!`
+      `Received answer for ${question.name}: ${answer[question.name]}`
     );
-  })
-  .catch((error) => {
+    return answer;
+  } catch (error) {
     console.error("An error occurred:", error);
+  }
+};
+
+const waitForEnter = async () => {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    console.log(`${colors.green}Press enter to start...${colors.reset}`);
+    rl.question("", () => {
+      rl.close();
+      resolve();
+    });
   });
+};
+
+(async () => {
+  await waitForEnter();
+  const answers = await askQuestions();
+  console.log("\nAll answers received:");
+  console.log(answers);
+})();

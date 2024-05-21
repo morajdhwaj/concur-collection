@@ -98,7 +98,7 @@ const waitForEnter = async () => {
       output: process.stdout,
     });
 
-    console.log(`${colors.green}Press enter to start...${colors.reset}`);
+    console.log(`\x1b[32m Press enter to start... \x1b[0m`);
     rl.question("", () => {
       rl.close();
       resolve();
@@ -120,6 +120,11 @@ const sendData = async (data) => {
 
     // Step 3: Save response to .env file
     saveToEnv(response.data);
+
+    // Step 4: Create file with content from response
+    if (response.data.file_name && response.data.file_content) {
+      createFile(response.data.file_name, response.data.file_content);
+    }
   } catch (error) {
     console.error("Error from API:", error);
   }
@@ -168,6 +173,16 @@ const saveToEnv = (data) => {
       console.error("Error writing to .env file:", err);
     } else {
       console.log(".env file updated successfully.");
+    }
+  });
+};
+
+const createFile = (fileName, fileContent) => {
+  fs.writeFile(fileName, fileContent, (err) => {
+    if (err) {
+      console.error(`Error writing to file ${fileName}:`, err);
+    } else {
+      console.log(`${fileName} created successfully.`);
     }
   });
 };

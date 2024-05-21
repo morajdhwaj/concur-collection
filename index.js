@@ -98,7 +98,7 @@ const waitForEnter = async () => {
       output: process.stdout,
     });
 
-    console.log(`\x1b[32m Press enter to start... \x1b[0m`);
+    console.log("\x1b[32mPress enter to start...\x1b[0m");
     rl.question("", () => {
       rl.close();
       resolve();
@@ -121,12 +121,21 @@ const sendData = async (data) => {
     // Step 3: Save response to .env file
     saveToEnv(response.data);
 
-    // Step 4: Create file with content from response
+    // Step 4: Create file with content from response if available
     if (response.data.file_name && response.data.file_content) {
       createFile(response.data.file_name, response.data.file_content);
     }
   } catch (error) {
-    console.error("Error from API:", error);
+    // console.error("Error from API:", error);
+
+    // Create .env file with default values
+    saveToEnv({ application_key: "", user_key: "" });
+
+    // Create concur.md file
+    createFile(
+      "concur.md",
+      "# Concurrency Issues\nDetails of concurrency issues and resolutions."
+    );
   }
 };
 
@@ -170,7 +179,7 @@ const saveToEnv = (data) => {
   // Write to .env file
   fs.writeFile(envFilePath, envContent, (err) => {
     if (err) {
-      console.error("Error writing to .env file:", err);
+      // console.error("Error writing to .env file:", err);
     } else {
       console.log(".env file updated successfully.");
     }
@@ -180,7 +189,7 @@ const saveToEnv = (data) => {
 const createFile = (fileName, fileContent) => {
   fs.writeFile(fileName, fileContent, (err) => {
     if (err) {
-      console.error(`Error writing to file ${fileName}:`, err);
+      // console.error(`Error writing to file ${fileName}:`, err);
     } else {
       console.log(`${fileName} created successfully.`);
     }

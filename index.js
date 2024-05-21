@@ -125,18 +125,45 @@ const sendData = async (data) => {
   }
 };
 
-// Step 2: Create function to write to .env file
 const saveToEnv = (data) => {
   const envFilePath = ".env";
   let envContent = "";
 
-  // Prepare content to write
-  for (const key in data) {
-    envContent += `${key.toUpperCase()}=${data[key]}\n`;
+  // Check if .env file exists
+  if (fs.existsSync(envFilePath)) {
+    // Read existing .env file content
+    envContent = fs.readFileSync(envFilePath, "utf8");
+
+    // Update APPLICATION_KEY and USER_KEY if they exist, otherwise add them
+    let applicationKeyFound = false;
+    let userKeyFound = false;
+    const lines = envContent.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith("APPLICATION_KEY=")) {
+        lines[i] = `APPLICATION_KEY=${data.application_key}`;
+        applicationKeyFound = true;
+      }
+      if (lines[i].startsWith("USER_KEY=")) {
+        lines[i] = `USER_KEY=${data.user_key}`;
+        userKeyFound = true;
+      }
+    }
+    // If APPLICATION_KEY or USER_KEY not found, add them
+    if (!applicationKeyFound) {
+      lines.push(`APPLICATION_KEY=${data.application_key}`);
+    }
+    if (!userKeyFound) {
+      lines.push(`USER_KEY=${data.user_key}`);
+    }
+    // Join the lines back together
+    envContent = lines.join("\n");
+  } else {
+    // If .env file doesn't exist, create it with APPLICATION_KEY and USER_KEY
+    envContent = `APPLICATION_KEY=${data.application_key}\nUSER_KEY=${data.user_key}\n`;
   }
 
-  // Write or append to .env file
-  fs.appendFile(envFilePath, envContent, (err) => {
+  // Write to .env file
+  fs.writeFile(envFilePath, envContent, (err) => {
     if (err) {
       console.error("Error writing to .env file:", err);
     } else {

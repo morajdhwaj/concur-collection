@@ -18,14 +18,16 @@ const colors = {
 };
 
 // Step 2: Define the ASCII art with color
-const asciiArt = `
-${colors.yellow} ██████╗ ██████╗ ███╗   ██╗ ██████╗██╗   ██╗██████╗     ${colors.reset}
-${colors.yellow}██╔════╝██╔═══██╗████╗  ██║██╔════╝██║   ██║██╔══██╗    ${colors.reset}
-${colors.yellow}██║     ██║   ██║██╔██╗ ██║██║     ██║   ██║██████╔╝    ${colors.reset}
-${colors.yellow}██║     ██║   ██║██║╚██╗██║██║     ██║   ██║██╔══██╗    ${colors.reset}
-${colors.yellow}╚██████╗╚██████╔╝██║ ╚████║╚██████╗╚██████╔╝██║  ██║    ${colors.reset}
-${colors.yellow} ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝    ${colors.reset}
+const asciiArt = ` \x1b[33m
+
+██████╗ ██████╗ ███╗   ██╗ ██████╗██╗   ██╗██████╗     
+██╔════╝██╔═══██╗████╗  ██║██╔════╝██║   ██║██╔══██╗    
+██║     ██║   ██║██╔██╗ ██║██║     ██║   ██║██████╔╝    
+██║     ██║   ██║██║╚██╗██║██║     ██║   ██║██╔══██╗    
+╚██████╗╚██████╔╝██║ ╚████║╚██████╗╚██████╔╝██║  ██║    
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝  \x1b[0m
 `;
+
 const decs = `Concur - Consent Manager is open source consent manager that 
 helps companies comply with Digital Personal Data Protection Act, 
 2023. Some more content will come here for ready to read and get

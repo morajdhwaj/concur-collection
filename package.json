@@ -1,0 +1,19 @@
+{
+  "name": "concur-collection",
+  "version": "1.2.0",
+  "description": "A starter command that asks for user input",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "starter-command": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "inquirer": "^8.0.0"
+  }
+}

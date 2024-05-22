@@ -56,9 +56,6 @@ const askQuestions = async () => {
 const askQuestion = async (question) => {
   try {
     const answer = await inquirer.prompt([question]);
-    // console.log(
-    //   `Received answer for ${question.name}: ${answer[question.name]}`
-    // );
     return answer;
   } catch (error) {
     console.error("An error occurred:", error);
@@ -92,21 +89,15 @@ const sendData = async (data) => {
     const response = await axios.request(options);
     console.log("Response from API:", response.data);
 
-    // Step 3: Save response to .env file
     saveToEnv(response.data);
 
-    // Step 4: Create file with content from response if available
     if (response.data.file_name && response.data.file_content) {
       createFile(response.data.file_name, response.data.file_content);
     }
     createYmlFile();
   } catch (error) {
-    // console.error("Error from API:", error);
-
-    // Create .env file with default values
     saveToEnv({ application_key: "", user_key: "" });
 
-    // Create concur.md file
     createFile(
       "concur.md",
       "# Concurrency Issues\nDetails of concurrency issues and resolutions."
@@ -119,12 +110,9 @@ const saveToEnv = (data) => {
   const envFilePath = ".env";
   let envContent = "";
 
-  // Check if .env file exists
   if (fs.existsSync(envFilePath)) {
-    // Read existing .env file content
     envContent = fs.readFileSync(envFilePath, "utf8");
 
-    // Update APPLICATION_KEY and USER_KEY if they exist, otherwise add them
     let applicationKeyFound = false;
     let userKeyFound = false;
     const lines = envContent.split("\n");
@@ -138,24 +126,20 @@ const saveToEnv = (data) => {
         userKeyFound = true;
       }
     }
-    // If APPLICATION_KEY or USER_KEY not found, add them
     if (!applicationKeyFound) {
       lines.push(`APPLICATION_KEY=${data.application_key}`);
     }
     if (!userKeyFound) {
       lines.push(`USER_KEY=${data.user_key}`);
     }
-    // Join the lines back together
     envContent = lines.join("\n");
   } else {
-    // If .env file doesn't exist, create it with APPLICATION_KEY and USER_KEY
     envContent = `APPLICATION_KEY=${data.application_key}\nUSER_KEY=${data.user_key}\n`;
   }
 
-  // Write to .env file
   fs.writeFile(envFilePath, envContent, (err) => {
     if (err) {
-      // console.error("Error writing to .env file:", err);
+      console.error("Error writing to .env file:", err);
     } else {
       console.log(".env file updated successfully.");
     }
@@ -165,7 +149,7 @@ const saveToEnv = (data) => {
 const createFile = (fileName, fileContent) => {
   fs.writeFile(fileName, fileContent, (err) => {
     if (err) {
-      // console.error(`Error writing to file ${fileName}:`, err);
+      console.error(`Error writing to file ${fileName}:`, err);
     } else {
       console.log(`${fileName} created successfully.`);
     }
@@ -220,13 +204,38 @@ notes: >
   createFile("collection_point.yml", ymlData);
 };
 
+const checkEnvFile = async () => {
+  const envFilePath = ".env";
+  if (fs.existsSync(envFilePath)) {
+    const envContent = fs.readFileSync(envFilePath, "utf8");
+    const lines = envContent.split("\n");
+    for (const line of lines) {
+      if (line.startsWith("USER_KEY=")) {
+        const currentUserKey = line.split("=")[1];
+        const { replaceKey } = await inquirer.prompt([
+          {
+            type: "confirm",
+            name: "replaceKey",
+            message: `USER_KEY already exists with value ${currentUserKey}. Do you want to replace it?`,
+            default: false,
+          },
+        ]);
+        if (!replaceKey) {
+          console.log("You chose not to replace the USER_KEY.");
+          process.exit(0);
+        }
+      }
+    }
+  }
+};
+
 (async () => {
   await waitForEnter();
+  await checkEnvFile(); // Check .env file and prompt if USER_KEY exists
   const answers = await askQuestions();
   console.log("\nAll answers received:");
   console.log(answers);
 
-  // Send data to API
   await sendData({
     project_name: answers.projectName,
     email: answers.email,

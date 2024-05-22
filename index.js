@@ -84,9 +84,9 @@ const askQuestions = async () => {
 const askQuestion = async (question) => {
   try {
     const answer = await inquirer.prompt([question]);
-    console.log(
-      `Received answer for ${question.name}: ${answer[question.name]}`
-    );
+    // console.log(
+    //   `Received answer for ${question.name}: ${answer[question.name]}`
+    // );
     return answer;
   } catch (error) {
     console.error("An error occurred:", error);
@@ -127,6 +127,7 @@ const sendData = async (data) => {
     if (response.data.file_name && response.data.file_content) {
       createFile(response.data.file_name, response.data.file_content);
     }
+    createYmlFile();
   } catch (error) {
     // console.error("Error from API:", error);
 
@@ -138,6 +139,7 @@ const sendData = async (data) => {
       "concur.md",
       "# Concurrency Issues\nDetails of concurrency issues and resolutions."
     );
+    createYmlFile();
   }
 };
 
@@ -196,6 +198,54 @@ const createFile = (fileName, fileContent) => {
       console.log(`${fileName} created successfully.`);
     }
   });
+};
+
+const createYmlFile = () => {
+  const ymlData = `
+collection_point:
+id: CP001
+name: Main Collection Point
+location:
+  address: 123 Main Street
+  city: Sampleville
+  state: CA
+  zip_code: 12345
+  country: USA
+contact:
+  name: John Doe
+  phone: +1-800-555-1234
+  email: johndoe@example.com
+operating_hours:
+  monday:
+    open: "08:00"
+    close: "18:00"
+  tuesday:
+    open: "08:00"
+    close: "18:00"
+  wednesday:
+    open: "08:00"
+    close: "18:00"
+  thursday:
+    open: "08:00"
+    close: "18:00"
+  friday:
+    open: "08:00"
+    close: "18:00"
+  saturday:
+    open: "10:00"
+    close: "16:00"
+  sunday:
+    open: "10:00"
+    close: "14:00"
+services_offered:
+  - recycling
+  - waste collection
+  - hazardous material disposal
+notes: >
+  This collection point accepts household waste, recyclables, and hazardous materials.
+  Please follow the guidelines for each type of material.
+  `;
+  createFile("collection_point.yml", ymlData);
 };
 
 (async () => {
